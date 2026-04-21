@@ -1,23 +1,34 @@
-from fastapi import APIRouter, HTTPException
-from typing import List
-from app.schemas.volunteer import VolunteerCreate, VolunteerResponse
+from fastapi import APIRouter
 from app.database.database import volunteers_collection
+from app.core.response import success_response
+from app.schemas.volunteer import VolunteerCreate
+import logging
 
-router = APIRouter(tags=["Volunteers"])
+logger = logging.getLogger(__name__)
 
-@router.post("/volunteer", response_model=VolunteerResponse, status_code=201)
+router = APIRouter()
+
+
+# 🔹 Create volunteer
+@router.post("/volunteer")
 async def create_volunteer(volunteer: VolunteerCreate):
-    try:
-        new_volunteer = await volunteers_collection.insert_one(volunteer.model_dump())
-        created_volunteer = await volunteers_collection.find_one({"_id": new_volunteer.inserted_id})
-        return created_volunteer
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database Error: {str(e)}")
+    logger.info(f"Adding new volunteer: {volunteer.name}")
+    vol_dict = volunteer.model_dump()
+    
+    result = await volunteers_collection.insert_one(vol_dict)
+    vol_dict["_id"] = str(result.inserted_id)
 
-@router.get("/volunteers", response_model=List[VolunteerResponse])
+    return success_response(vol_dict, "Volunteer created successfully")
+
+
+# 🔹 Get all volunteers
+@router.get("/volunteers")
 async def get_volunteers():
-    try:
-        volunteers = await volunteers_collection.find().to_list(1000)
-        return volunteers
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database Error: {str(e)}")
+    logger.info("Fetching all volunteers")
+    volunteers = await volunteers_collection.find().to_list(length=100)
+
+    # Convert ObjectId to string
+    for v in volunteers:
+        v["_id"] = str(v["_id"])
+
+    return success_response(volunteers, "Volunteers fetched successfully")
