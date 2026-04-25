@@ -1,5 +1,9 @@
+from pathlib import Path
+
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.routes import volunteer, task
@@ -17,6 +21,14 @@ app = FastAPI(
     title="AI Volunteer Coordination System",
     description="API for registering volunteers and assigning them to tasks based on AI matching logic.",
     version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.exception_handler(StarletteHTTPException)
@@ -45,6 +57,10 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 app.include_router(volunteer.router)
 app.include_router(task.router)
+
+FRONTEND_DIR = Path(__file__).resolve().parents[1] / "frontend"
+if FRONTEND_DIR.exists():
+    app.mount("/app", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 @app.get("/")
 async def root():

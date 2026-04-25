@@ -1,0 +1,17 @@
+{
+  "name": "ai-volunteer-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Netlify-ready frontend and serverless API for the AI Volunteer Coordination System.",
+  "scripts": {
+    "check:functions": "node --check netlify/functions/api.js",
+    "dev:backend": "python3 -m uvicorn app.main:app --reload",
+    "dev:netlify": "npx netlify dev"
+  },
+  "dependencies": {
+    "mongodb": "^6.12.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

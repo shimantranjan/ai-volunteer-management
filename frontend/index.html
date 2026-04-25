@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Volunteer Command Center</title>
+    <meta
+      name="description"
+      content="Responsive frontend for the AI Volunteer Coordination System."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <div class="shell-lines" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="#dashboard" aria-label="AI Volunteer Command Center home">
+        <span class="brand-mark">AV</span>
+        <span>
+          <strong>AI Volunteer</strong>
+          <small>Command Center</small>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#create">Create</a>
+        <a href="#registry">Registry</a>
+      </nav>
+
+      <div class="top-actions">
+        <button class="icon-button" id="refreshButton" type="button" title="Refresh data">
+          <span aria-hidden="true">R</span>
+          <span class="sr-only">Refresh data</span>
+        </button>
+        <button class="ghost-button" id="demoButton" type="button">Demo data</button>
+        <button class="icon-button" id="themeToggle" type="button" title="Toggle theme">
+          <span aria-hidden="true">T</span>
+          <span class="sr-only">Toggle theme</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="ops-grid section-pad" id="dashboard" data-reveal>
+        <div class="command-panel">
+          <div class="section-kicker">Live response operations</div>
+          <div class="hero-copy">
+            <h1>Match the right volunteer to the right task in seconds.</h1>
+            <p>
+              Coordinate skills, proximity, urgency, and availability from one fast
+              briefing surface built for hackathon demos and real field work.
+            </p>
+          </div>
+
+          <div class="metric-grid" aria-label="System metrics">
+            <article class="metric-card">
+              <span>Available</span>
+              <strong id="availableCount">0</strong>
+              <small>ready volunteers</small>
+            </article>
+            <article class="metric-card">
+              <span>Open</span>
+              <strong id="openTaskCount">0</strong>
+              <small>unassigned tasks</small>
+            </article>
+            <article class="metric-card">
+              <span>Assigned</span>
+              <strong id="assignedCount">0</strong>
+              <small>active missions</small>
+            </article>
+            <article class="metric-card accent">
+              <span>AI score</span>
+              <strong id="avgScore">--</strong>
+              <small>top confidence</small>
+            </article>
+          </div>
+
+          <div class="map-stage">
+            <div class="map-toolbar">
+              <div>
+                <span class="status-dot" id="apiDot"></span>
+                <strong id="apiStatus">Checking API</strong>
+              </div>
+              <span id="selectedTaskLabel">No task selected</span>
+            </div>
+            <canvas id="cityCanvas" width="980" height="520" aria-label="Task and volunteer map"></canvas>
+          </div>
+        </div>
+
+        <aside class="match-studio" aria-label="AI match studio">
+          <div class="studio-head">
+            <div>
+              <div class="section-kicker">AI match studio</div>
+              <h2>Explainable assignment</h2>
+            </div>
+            <span class="pill" id="modePill">Live API</span>
+          </div>
+
+          <label class="field-label" for="taskSelect">Focus task</label>
+          <select id="taskSelect" class="select-input">
+            <option value="">Select a task</option>
+          </select>
+
+          <div class="match-summary" id="matchSummary">
+            <div class="empty-state">
+              <strong>Choose a task</strong>
+              <span>Top volunteers will appear with skill, distance, urgency, and availability scores.</span>
+            </div>
+          </div>
+
+          <div class="studio-actions">
+            <button class="primary-button" id="previewButton" type="button">Preview matches</button>
+            <button class="secondary-button" id="assignButton" type="button">Assign best</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="section-pad" id="create" data-reveal>
+        <div class="section-header">
+          <div>
+            <div class="section-kicker">Rapid intake</div>
+            <h2>Create volunteers and tasks</h2>
+          </div>
+          <div class="api-card">
+            <label for="apiBaseInput">API base</label>
+            <div class="api-row">
+              <input id="apiBaseInput" type="text" inputmode="url" placeholder="/api or http://localhost:8000" />
+              <button class="secondary-button small" id="saveApiButton" type="button">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <form class="form-panel" id="volunteerForm">
+            <div class="form-title">
+              <span class="form-badge">01</span>
+              <h3>Register volunteer</h3>
+            </div>
+            <div class="form-row">
+              <label>
+                Name
+                <input name="name" required placeholder="Aarav Sharma" />
+              </label>
+              <label>
+                Skills
+                <input name="skills" required placeholder="medical, logistics, driving" />
+              </label>
+            </div>
+            <div class="form-row three">
+              <label>
+                Latitude
+                <input name="lat" type="number" step="0.000001" required value="28.6139" />
+              </label>
+              <label>
+                Longitude
+                <input name="lon" type="number" step="0.000001" required value="77.2090" />
+              </label>
+              <label class="switch-row">
+                Available
+                <input name="availability" type="checkbox" checked />
+              </label>
+            </div>
+            <button class="primary-button" type="submit">Add volunteer</button>
+          </form>
+
+          <form class="form-panel" id="taskForm">
+            <div class="form-title">
+              <span class="form-badge">02</span>
+              <h3>Create task</h3>
+            </div>
+            <div class="form-row">
+              <label>
+                Task title
+                <input name="title" required placeholder="Deliver medical supplies" />
+              </label>
+              <label>
+                Required skills
+                <input name="required_skills" required placeholder="medical, driving" />
+              </label>
+            </div>
+            <div class="form-row three">
+              <label>
+                Latitude
+                <input name="lat" type="number" step="0.000001" required value="28.5355" />
+              </label>
+              <label>
+                Longitude
+                <input name="lon" type="number" step="0.000001" required value="77.3910" />
+              </label>
+              <label>
+                Urgency
+                <select name="urgency" required>
+                  <option value="1">Low</option>
+                  <option value="2">Medium</option>
+                  <option value="3" selected>High</option>
+                </select>
+              </label>
+            </div>
+            <button class="primary-button" type="submit">Create task</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="section-pad registry-section" id="registry" data-reveal>
+        <div class="section-header">
+          <div>
+            <div class="section-kicker">Field registry</div>
+            <h2>People and tasks</h2>
+          </div>
+          <div class="filter-tabs" role="tablist" aria-label="Registry filters">
+            <button class="tab active" data-filter="all" type="button">All</button>
+            <button class="tab" data-filter="available" type="button">Available</button>
+            <button class="tab" data-filter="open" type="button">Open</button>
+          </div>
+        </div>
+
+        <div class="registry-grid">
+          <div>
+            <div class="list-head">
+              <h3>Volunteers</h3>
+              <span id="volunteerTotal">0 total</span>
+            </div>
+            <div class="card-list" id="volunteerList"></div>
+          </div>
+          <div>
+            <div class="list-head">
+              <h3>Tasks</h3>
+              <span id="taskTotal">0 total</span>
+            </div>
+            <div class="card-list" id="taskList"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+  </body>
+</html>
