@@ -87,27 +87,27 @@ The same user experience works in both modes:
 
 ```text
 ai-volunteer-management/
-├── app/
-│   ├── core/
-│   ├── database/
-│   ├── integrations/
-│   ├── routes/
-│   ├── schemas/
-│   ├── services/
-│   ├── utils/
-│   └── main.py
-├── frontend/
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
-├── netlify/
-│   └── functions/
-│       └── api.js
-├── .env.example
-├── netlify.toml
-├── package.json
-├── requirements.txt
-└── README.md
+|-- app/
+|   |-- core/
+|   |-- database/
+|   |-- integrations/
+|   |-- routes/
+|   |-- schemas/
+|   |-- services/
+|   |-- utils/
+|   `-- main.py
+|-- frontend/
+|   |-- index.html
+|   |-- styles.css
+|   `-- app.js
+|-- netlify/
+|   `-- functions/
+|       `-- api.js
+|-- .env.example
+|-- netlify.toml
+|-- package.json
+|-- requirements.txt
+`-- README.md
 ```
 
 ## Local Development
