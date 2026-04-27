@@ -3,7 +3,11 @@ const defaultApiBase =
   window.location.port === "8000"
     ? window.location.origin
     : isLocalHost
+<<<<<<< HEAD
       ? "http://localhost:8000"
+=======
+      ? "http://localhost:8001"
+>>>>>>> 01b4cd9 (Final backend + frontend ready for deployment)
       : "/api";
 
 const demoVolunteers = [
@@ -298,14 +302,24 @@ function renderMatches() {
           </div>
           <div class="score-stack">
             ${["skill", "distance", "availability", "urgency"]
+<<<<<<< HEAD
               .map(
                 (key) => `
+=======
+          .map(
+            (key) => `
+>>>>>>> 01b4cd9 (Final backend + frontend ready for deployment)
                 <div class="score-line">
                   <span>${key}</span>
                   <i><b style="--score:${Number(breakdown[key] || 0)}"></b></i>
                 </div>`,
+<<<<<<< HEAD
               )
               .join("")}
+=======
+          )
+          .join("")}
+>>>>>>> 01b4cd9 (Final backend + frontend ready for deployment)
           </div>
           <div class="chip-row">
             ${(match.skills || []).map((skill) => `<span class="chip">${escapeHtml(skill)}</span>`).join("")}
